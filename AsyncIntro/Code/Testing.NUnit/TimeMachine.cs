@@ -41,7 +41,7 @@ namespace Testing.NUnit
             {
                 throw new ArgumentException("A task completing at this time has already been scheduled.", "time");
             }
-            TaskCompletionSource<T> source = new TaskCompletionSource<T>();
+            TaskCompletionSource<T> source = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
             actions[time] = () => action(source);
             return source.Task;
         }
