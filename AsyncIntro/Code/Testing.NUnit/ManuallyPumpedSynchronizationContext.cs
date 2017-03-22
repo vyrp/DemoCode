@@ -20,6 +20,7 @@ namespace Testing.NUnit
 
         public override void Post(SendOrPostCallback callback, object state)
         {
+            Console.WriteLine("Post()");
             callbacks.Add(Tuple.Create(callback, state));
         }
 

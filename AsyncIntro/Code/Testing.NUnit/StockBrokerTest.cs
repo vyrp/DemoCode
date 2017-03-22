@@ -17,6 +17,14 @@ namespace Testing.NUnit
         private IStockPortfolioService portfolioService;
         private IStockPriceService priceService;
 
+        static void Main()
+        {
+            var test = new StockBrokerTest();
+            test.SetUp();
+            test.CalculateNetWorthAsync_AuthenticationFailure_ThrowsDelayed();
+            Console.ReadLine();
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -49,7 +57,9 @@ namespace Testing.NUnit
             {
                 var worth = broker.CalculateWorthAsync("jon", "pass");
                 Assert.IsFalse(worth.IsCompleted);
+                Console.WriteLine("Before advance.");
                 advancer.Advance();
+                Console.WriteLine("After advance.");
                 AssertFaulted<AuthenticationException>(worth);
             });
         }

@@ -39,7 +39,9 @@ namespace Testing.NUnit
 
         private async Task<decimal> CalculateWorthAsyncImpl(string user, string password)
         {
+            Console.WriteLine("Before auth.");
             var userId = await authenticationService.AuthenticateUserAsync(user, password);
+            Console.WriteLine("After auth.");
             if (userId == null)
             {
                 throw new AuthenticationException("Bad username or password");
