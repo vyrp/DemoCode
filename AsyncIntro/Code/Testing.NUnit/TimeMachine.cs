@@ -48,36 +48,21 @@ namespace Testing.NUnit
 
         public void ExecuteInContext(Action<Advancer> action)
         {
-            ExecuteInContext(new ManuallyPumpedSynchronizationContext(), action);
-        }
+            Advancer advancer = new Advancer(actions);
 
-        public void ExecuteInContext(ManuallyPumpedSynchronizationContext context, Action<Advancer> action)
-        {
-            SynchronizationContext originalContext = SynchronizationContext.Current;
-            try
-            {
-                SynchronizationContext.SetSynchronizationContext(context);
-                Advancer advancer = new Advancer(actions, context);
-                // This is where the tests assertions etc will go...
-                action(advancer);
-            }
-            finally
-            {
-                SynchronizationContext.SetSynchronizationContext(originalContext);
-            }
+            // This is where the tests assertions etc will go...
+            action(advancer);
         }
 
         // So tempted to call this class SonicScrewdriver...
         public class Advancer
         {
             private readonly SortedDictionary<int, Action> actions;
-            private readonly ManuallyPumpedSynchronizationContext context;
             private int time = 0;
 
-            internal Advancer(SortedDictionary<int, Action> actions, ManuallyPumpedSynchronizationContext context)
+            internal Advancer(SortedDictionary<int, Action> actions)
             {
                 this.actions = actions;
-                this.context = context;
             }
 
             public int Time { get { return time; } }
@@ -97,7 +82,6 @@ namespace Testing.NUnit
                 {
                     timesToRemove.Add(entry.Key);
                     entry.Value();
-                    context.PumpAll();
                 }
                 foreach (int key in timesToRemove)
                 {
