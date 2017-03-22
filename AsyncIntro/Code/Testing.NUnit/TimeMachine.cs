@@ -92,13 +92,18 @@ namespace Testing.NUnit
                 {
                     throw new ArgumentOutOfRangeException("targetTime", "Can only advance time forwards");
                 }
+
                 List<int> timesToRemove = new List<int>();
                 foreach (var entry in actions.TakeWhile(e => e.Key <= targetTime))
                 {
                     timesToRemove.Add(entry.Key);
+                    var oldContext = SynchronizationContext.Current;
+                    SynchronizationContext.SetSynchronizationContext(null);
                     entry.Value();
+                    SynchronizationContext.SetSynchronizationContext(oldContext);
                     context.PumpAll();
                 }
+
                 foreach (int key in timesToRemove)
                 {
                     actions.Remove(key);
